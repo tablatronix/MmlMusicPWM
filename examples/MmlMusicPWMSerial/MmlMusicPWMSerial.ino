@@ -24,7 +24,11 @@ MmlMusicPWM music(BUZ_PIN);
 
 // Reserve a buffer for playing the notes received via the serial console.
 // Note that this buffer should remain available while playing.
+#ifdef ESP8266
+char szBuf[1024]; // serial buffer seems to be only 128 bytes on ESP, only 64 on ATmega
+#else
 char szBuf[128]; // serial buffer seems to be only 128 bytes on ESP, only 64 on ATmega
+#end
 
 void fnCompleted(void)
 {   // callback function to notify completion
@@ -34,6 +38,9 @@ void fnCompleted(void)
 void setup()
 { // put your setup code here, to run once:
     Serial.begin(115200);
+    #ifdef ESP8266
+    Serial.setRxBufferSize(1024);
+    #endif
     Serial.println();
     Serial.println(F("=================="));
     Serial.println(F("Serial MmlMusicPWM"));
